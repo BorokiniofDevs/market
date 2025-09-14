@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../includes/head.ejs") %>
+  <body>
+    <%- include("../includes/navigation.ejs") %>
+
+    <main class="hero">
+      <div class="hero-text">
+        <h1>Create A Product</h1>
+      </div>
+    </main>
+
+    <section>
+      <form action="/create-product" method="POST"></form>
+      <input type="text" name="title" />
+      <input type="text" name="imageUrl" />
+      <input type="number" name="price" />
+      <textarea name="description"></textarea>
+      <button type="submit">Create</button>
+    </section>
+
+    <%- include("../includes/footer.ejs") %>
+  </body>
+</html>

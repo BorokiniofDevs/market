@@ -4,19 +4,49 @@
   <body>
     <%- include("../includes/navigation.ejs") %>
 
-    <main class="hero">
+    <main class="hero small-hero">
       <div class="hero-text">
-        <h1>Create A Product</h1>
+        <h1>Create a Product</h1>
+        <p>Add new products to your Market shop</p>
       </div>
     </main>
 
-    <section>
-      <form action="/create-product" method="POST"></form>
-      <input type="text" name="title" />
-      <input type="text" name="imageUrl" />
-      <input type="number" name="price" />
-      <textarea name="description"></textarea>
-      <button type="submit">Create</button>
+    <section class="form-section">
+      <form action="/admin/create-product" method="POST" class="product-form">
+        <div class="form-group">
+          <label for="title">Product Title</label>
+          <input type="text" id="title" name="title" required />
+        </div>
+
+        <div class="form-group">
+          <label for="imageUrl">Image URL</label>
+          <input type="text" id="imageUrl" name="imageUrl" required />
+        </div>
+
+        <div class="form-group">
+          <label for="price">Price ($)</label>
+          <input
+            type="number"
+            id="price"
+            name="price"
+            required
+            min="1"
+            step="0.01"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            name="description"
+            rows="4"
+            required
+          ></textarea>
+        </div>
+
+        <button type="submit" class="btn">Create Product</button>
+      </form>
     </section>
 
     <%- include("../includes/footer.ejs") %>

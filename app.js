@@ -26,7 +26,7 @@ sequelize
     // force: true,
   })
   .then((result) =>
-    app.listen(3002, () => {
+    app.listen(3001, () => {
       console.log("Your server is starting.");
       console.log(result);
     })

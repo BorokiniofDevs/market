@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../includes/head.ejs") %>
+  <body>
+    <%- include("../includes/navigation.ejs") %>
+
+    <!-- Slim Hero -->
+    <main class="hero small-hero">
+      <div class="hero-text">
+        <h1><%= product.title %></h1>
+        <p>Explore the details of your selected product</p>
+      </div>
+    </main>
+
+    <!-- Single Product -->
+    <section class="product-section single-product">
+      <div class="product-card">
+        <img
+          src="<%= product.imageUrl %>"
+          alt="<%= product.title %>"
+          class="product-img"
+        />
+        <div class="product-info">
+          <h2><%= product.title %></h2>
+          <p class="price">$<%= product.price %></p>
+          <p class="desc"><%= product.description %></p>
+
+          <div class="actions">
+            <form action="/cart" method="POST">
+              <input type="hidden" name="productId" value="<%= product.id %>" />
+              <button type="submit" class="btn">Add to Cart</button>
+            </form>
+
+            <a href="/shop" class="btn btn-secondary">Back to Shop</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <%- include("../includes/footer.ejs") %>
+  </body>
+</html>

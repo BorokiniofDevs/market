@@ -93,3 +93,36 @@ exports.postToCart = (req, res, next) => {
       console.log(err);
     });
 };
+
+exports.postReduceCart = (req, res, next) => {
+  const prodId = req.body.productId;
+  req.user
+    .getCart()
+    .then((cart) => cart.getProducts({ where: { id: prodId } }))
+    .then((products) => {
+      const product = product[0];
+      if (!product) return res.redirect("/shop/cart");
+      let oldQuantity = product.cartItem.quantity;
+      if (oldQuantity > 1) {
+        return product.cartItem.update({ quantity: oldQuantity - 1 });
+      } else {
+        return product.cartItem.destroy();
+      }
+    })
+    .then(() => res.redirect("/shop/cart"))
+    .catch((err) => console.log(err));
+};
+
+exports.postDeleteCart = (req, res, next) => {
+  const prodId = req.body.productId;
+  req.user
+    .getCart()
+    .then((cart) => cart.getProducts({ where: { id: prodId } }))
+    .then((products) => {
+      const product = products[0];
+      if (!product) return res.redirect("/shop/cart");
+      return product.cartItem.destroy();
+    })
+    .then(() => res.redirect("/shop/cart"))
+    .catch((err) => console.log(err));
+};

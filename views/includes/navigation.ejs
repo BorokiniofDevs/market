@@ -7,7 +7,13 @@
       <li><a href="/shop/home">Home</a></li>
       <li><a href="/shop/index">Shop</a></li>
       <li><a href="/admin/create-product">Create Product</a></li>
-      <li><a href="/shop/cart">Cart</a></li>
+      <li>
+        <a href="/shop/cart"
+          >Cart <% if (cartCount > 0) { %>
+          <sup class="cart-count"><%= cartCount %></sup>
+          <% } %>
+        </a>
+      </li>
       <li><a href="/contact">Contact</a></li>
     </ul>
   </nav>

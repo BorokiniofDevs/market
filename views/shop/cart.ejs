@@ -30,6 +30,33 @@
             <td><%= item.quantity %></td>
             <td>$<%= item.product.price.toFixed(2) %></td>
             <td>$<%= subtotal.toFixed(2) %></td>
+            <td>
+              <form
+                action="/shop/cart-reduce"
+                method="POST"
+                style="display: inline"
+              >
+                <input
+                  type="hidden"
+                  name="productId"
+                  value="<%= item.product.id %>"
+                />
+                <button type="submit" class="btn btn-small">-</button>
+              </form>
+              <!-- <%= item.quantity %> -->
+              <form
+                action="/shop/cart-delete"
+                method="POST"
+                style="display: inline"
+              >
+                <input
+                  type="hidden"
+                  name="productId"
+                  value="<%= item.product.id %>"
+                />
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
           </tr>
           <% }) %>
         </tbody>
@@ -42,7 +69,7 @@
       </table>
 
       <div class="cart-actions">
-        <a href="/shop" class="btn btn-secondary">Continue Shopping</a>
+        <a href="/shop/index" class="btn btn-secondary">Continue Shopping</a>
         <button class="btn">Proceed to Checkout</button>
       </div>
       <% } else { %>

@@ -29,6 +29,20 @@ app.use((req, res, next) => {
     .catch((err) => console.log(err));
 });
 
+app.use((req, res, next) => {
+  if (!req.user) return next();
+  req.user
+    .getCart()
+    .then((cart) => cart.getProducts())
+    .then((products) => {
+      let totalItems = 0;
+      products.forEach((p) => (totalItems += p.cartItem.quantity));
+      res.locals.cartCount = totalItems;
+      next();
+    })
+    .catch((err) => console.log(err));
+});
+
 app.use("/admin", adminRoutes);
 app.use("/shop", shopRoutes);
 app.use(errorRoutes);

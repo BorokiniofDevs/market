@@ -4,8 +4,10 @@ const shopController = require("../controller/shop");
 
 const router = express.Router();
 
-router.get("/shop", shopController.getProducts);
+router.get("/home", shopController.getProducts);
 router.get("/product-detail/:productId", shopController.getProductDetail);
 router.get("/index", shopController.getProducts);
+router.get("/cart", shopController.getCart);
+router.post("/cart", shopController.postToCart);
 
 module.exports = router;

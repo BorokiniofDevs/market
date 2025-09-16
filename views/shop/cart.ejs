@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../includes/head.ejs") %>
+  <body>
+    <%- include("../includes/navigation.ejs") %>
+
+    <main class="hero small-hero">
+      <div class="hero-text">
+        <h1>Your Cart</h1>
+        <p>Review your items before checkout</p>
+      </div>
+    </main>
+
+    <section class="cart-section">
+      <% if (cart && cart.length > 0) { %>
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price ($)</th>
+            <th>Subtotal ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% let total = 0; %> <% cart.forEach(item => { let subtotal =
+          item.quantity * item.product.price; total += subtotal; %>
+          <tr>
+            <td><%= item.product.title %></td>
+            <td><%= item.quantity %></td>
+            <td>$<%= item.product.price.toFixed(2) %></td>
+            <td>$<%= subtotal.toFixed(2) %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="total-label">Total:</td>
+            <td class="total-value">$<%= total.toFixed(2) %></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="cart-actions">
+        <a href="/shop" class="btn btn-secondary">Continue Shopping</a>
+        <button class="btn">Proceed to Checkout</button>
+      </div>
+      <% } else { %>
+      <div class="empty-cart">
+        <p>No items in cart.</p>
+        <a href="/shop" class="btn">Go to Shop</a>
+      </div>
+      <% } %>
+    </section>
+
+    <%- include("../includes/footer.ejs") %>
+  </body>
+</html>

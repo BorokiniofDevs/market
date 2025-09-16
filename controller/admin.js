@@ -21,7 +21,7 @@ exports.postCreateProduct = (req, res, next) => {
   })
     .then((result) => {
       console.log("PRODUCT CREATED");
-      res.redirect("/shop/shop");
+      res.redirect("/shop/index");
     })
     .catch((err) => console.log(err));
 };
@@ -42,7 +42,7 @@ exports.postEditProduct = (req, res, next) => {
     })
     .then((result) => {
       console.log("PRODUCT UPDATED");
-      return res.redirect("/shop/shop");
+      return res.redirect("/shop/index");
     })
     .catch((err) => console.log(err));
 };

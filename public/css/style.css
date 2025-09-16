@@ -372,3 +372,68 @@
     padding: 0.75rem 2rem;
     font-size: 1rem;
 }
+
+/* Cart Section */
+.cart-section {
+    max-width: 1000px;
+    margin: 2.5rem auto;
+    padding: 1.5rem;
+}
+
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+.cart-table th,
+.cart-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-table th {
+    background: #f4b400;
+    color: #222;
+    font-weight: bold;
+}
+
+.cart-table tr:last-child td {
+    border-bottom: none;
+}
+
+.total-label {
+    text-align: right;
+    font-weight: bold;
+}
+
+.total-value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #f4b400;
+}
+
+.cart-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.empty-cart {
+    text-align: center;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+.empty-cart p {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: #555;
+}

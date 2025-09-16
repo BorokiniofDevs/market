@@ -20,14 +20,23 @@ app.use(express.static(path.join(rootdir, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(rootdir, "views"));
 
+app.use((req, res, next) => {
+  User.findByPk(1)
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => console.log(err));
+});
+
 app.use("/admin", adminRoutes);
 app.use("/shop", shopRoutes);
 app.use(errorRoutes);
 
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 User.hasMany(Product);
-Cart.belongsTo(User);
 User.hasOne(Cart);
+Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
 
@@ -35,17 +44,22 @@ sequelize
   .sync({
     // force: true,
   })
+  .then((result) => {
+    User.findByPk(1);
+  })
   .then((user) => {
     if (!user) {
       return User.create({ name: "Borokini", email: "text@gmail.com" });
     }
     return user;
   })
-  .then((user) => {})
-  .then((result) =>
+  .then((user) => {
+    return user.createCart();
+  })
+  .then((cart) =>
     app.listen(3001, () => {
       console.log("Your server is starting.");
-      console.log(result);
+      // console.log(result);
     })
   )
   .catch((err) => console.log(err));

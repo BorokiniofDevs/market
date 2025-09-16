@@ -3,6 +3,8 @@ const Product = require("../model/product");
 exports.getCreateProduct = (req, res, next) => {
   res.render("admin/create-product", {
     pageTitle: "Create Product",
+    editing: false,
+    product: {},
   });
 };
 exports.postCreateProduct = (req, res, next) => {
@@ -19,8 +21,52 @@ exports.postCreateProduct = (req, res, next) => {
   })
     .then((result) => {
       console.log("PRODUCT CREATED");
-      console.log(result);
-      res.redirect("/shop/shop");
+      res.redirect("/shop/shop", {
+        pageTitle: "Create Product",
+      });
+    })
+    .catch((err) => console.log(err));
+};
+exports.postEditProduct = (req, res, next) => {
+  const prodId = req.body.productId;
+  const updatedTitle = req.body.title;
+  const updatedPrice = req.body.price;
+  const updatedImageUrl = req.body.imageUrl;
+  const updatedDescription = req.body.description;
+
+  Product.findByPk(prodId)
+    .then((product) => {
+      product.title = updatedTitle;
+      product.price = updatedPrice;
+      product.imageUrl = updatedImageUrl;
+      product.description = updatedDescription;
+      return product.save();
+    })
+    .then((result) => {
+      console.log("PRODUCT UPDATED");
+      return res.redirect("/shop/shop");
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.getEditProduct = (req, res, next) => {
+  const prodId = req.params.productId;
+  const editMode = req.query.edit;
+
+  if (!editMode) {
+    return res.redirect("/");
+  }
+
+  Product.findByPk(prodId)
+    .then((product) => {
+      if (!product) {
+        return res.redirect("/admin/products");
+      }
+      res.render("admin/create-product", {
+        pageTitle: "Edit " + product.title,
+        editing: editMode,
+        product: product,
+      });
     })
     .catch((err) => console.log(err));
 };

@@ -26,12 +26,20 @@
           <p class="desc"><%= product.description %></p>
 
           <div class="actions">
-            <form action="/cart" method="POST">
-              <input type="hidden" name="productId" value="<%= product.id %>" />
-              <button type="submit" class="btn">Add to Cart</button>
-            </form>
+            <a href="/admin/edit-product/<%= product.id %>?edit=true">
+              <button type="submit" class="btn btn-secondary">
+                Edit Product
+              </button>
+            </a>
 
-            <a href="/shop" class="btn btn-secondary">Back to Shop</a>
+            <!-- <form action="/edit-page/<%=product.id %>/edit" method="POST">
+              <input type="hidden" name="productId" value="<%= product.id %>" />
+              <button type="submit" class="btn btn-secondary">
+                Edit Product
+              </button>
+            </form> -->
+
+            <a href="/shop" class="btn">Delete</a>
           </div>
         </div>
       </div>

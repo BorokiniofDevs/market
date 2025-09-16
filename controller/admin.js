@@ -21,9 +21,7 @@ exports.postCreateProduct = (req, res, next) => {
   })
     .then((result) => {
       console.log("PRODUCT CREATED");
-      res.redirect("/shop/shop", {
-        pageTitle: "Create Product",
-      });
+      res.redirect("/shop/shop");
     })
     .catch((err) => console.log(err));
 };
@@ -69,4 +67,19 @@ exports.getEditProduct = (req, res, next) => {
       });
     })
     .catch((err) => console.log(err));
+};
+
+exports.postDeleteProduct = (req, res, next) => {
+  const prodId = req.body.productId;
+  Product.findByPk(prodId)
+    .then((product) => {
+      return product.destroy();
+    })
+    .then((result) => {
+      console.log("PRODUCT DELETED");
+      return res.redirect("/shop/shop");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };

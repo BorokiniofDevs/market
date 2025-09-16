@@ -13,7 +13,12 @@
           <sup id="cart-count" class="cart-count"><%= cartCount || 0 %></sup>
         </a>
       </li>
-      <li><a href="/contact">Contact</a></li>
+      <li>
+        <a href="/shop/order"
+          >Orders
+          <span id="order-count" class="badge"><%= orderCount || 0 %></span>
+        </a>
+      </li>
     </ul>
   </nav>
 </header>

@@ -211,3 +211,43 @@ exports.postDeleteCart = (req, res, next) => {
       console.error(err);
     });
 };
+
+exports.postOrder = (req, res, next) => {
+  let fetchedCart;
+
+  req.user
+    .getCart()
+    .then((cart) => {
+      fetchedCart = cart;
+      return cart.getProducts();
+    })
+    .then((products) => {
+      return req.user.createOrder().then((order) => {
+        return order.addProducts(
+          products.map((p) => {
+            p.orderItem = {
+              quantity: p.cartItem.quantity,
+            };
+            return p;
+          })
+        );
+      });
+    })
+    .then((result) => {
+      return fetchedCart.setProducts(null);
+    })
+    .then(() => res.redirect("/shop/order"))
+    .catch((err) => console.log(err));
+};
+
+exports.getOrders = (req, res, next) => {
+  req.user
+    .getOrders({ include: ["products"] })
+    .then((orders) => {
+      res.render("shop/order", {
+        orders: orders,
+        pageTitle: "Your Orders",
+      });
+    })
+    .catch((err) => console.log(err));
+};

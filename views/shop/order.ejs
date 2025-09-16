@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../includes/head.ejs") %>
+  <body>
+    <%- include("../includes/navigation.ejs") %>
+
+    <main class="hero small-hero">
+      <div class="hero-text">
+        <h1>Your Orders</h1>
+        <p>Track your purchases and make payments</p>
+      </div>
+    </main>
+
+    <section class="order-section">
+      <% if (orders && orders.length > 0) { %> <% orders.forEach(order => { %>
+      <div class="order-card">
+        <div class="order-header">
+          <h2>Order #<%= order.id %></h2>
+          <span class="tracking-id">Tracking ID: ORD-<%= order.id %></span>
+        </div>
+
+        <table class="order-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Price ($)</th>
+              <th>Subtotal ($)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% let total = 0; %> <% order.products.forEach(prod => { const sub =
+            prod.orderItem.quantity * prod.price; total += sub; %>
+            <tr>
+              <td><%= prod.title %></td>
+              <td><%= prod.orderItem.quantity %></td>
+              <td>$<%= prod.price.toFixed(2) %></td>
+              <td>$<%= sub.toFixed(2) %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3" class="total-label">Total:</td>
+              <td class="total-value">$<%= total.toFixed(2) %></td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div class="order-actions">
+          <form action="/shop/pay-order" method="POST">
+            <input type="hidden" name="orderId" value="<%= order.id %>" />
+            <button class="btn">Proceed to Payment</button>
+          </form>
+        </div>
+      </div>
+      <% }) %> <% } else { %>
+      <div class="empty-orders">
+        <p>You don’t have any orders yet.</p>
+        <a href="/shop" class="btn">Start Shopping</a>
+      </div>
+      <% } %>
+    </section>
+
+    <%- include("../includes/footer.ejs") %>
+  </body>
+</html>

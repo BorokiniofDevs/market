@@ -63,8 +63,12 @@
 
       <div class="cart-actions">
         <a href="/shop/index" class="btn btn-secondary">Continue Shopping</a>
-        <button class="btn">Proceed to Checkout</button>
+
+        <form action="/shop/create-order" method="POST" style="display: inline">
+          <button type="submit" class="btn">Proceed to Checkout</button>
+        </form>
       </div>
+
       <% } else { %>
       <div class="empty-cart">
         <p>No items in cart.</p>

@@ -446,3 +446,93 @@
     font-size: 0.8rem;
     vertical-align: super;
 }
+.badge {
+    background: crimson;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    vertical-align: super;
+    margin-left: 4px;
+}
+
+/* Orders */
+.order-section {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.order-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.order-header h2 {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.tracking-id {
+    font-size: 0.9rem;
+    color: #555;
+    background: #f5f5f5;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.order-table th,
+.order-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.order-table th {
+    background: #f8f8f8;
+}
+
+.total-label {
+    font-weight: bold;
+    text-align: right;
+}
+
+.total-value {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.order-actions {
+    text-align: right;
+}
+
+.order-actions .btn {
+    background: #007bff;
+    color: #fff;
+}
+
+.empty-orders {
+    text-align: center;
+    padding: 2rem;
+}
+
+.empty-orders p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}

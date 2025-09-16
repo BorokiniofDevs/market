@@ -12,6 +12,8 @@ const Product = require("./model/product");
 const Cart = require("./model/cart");
 const User = require("./model/user");
 const CartItem = require("./model/cartItem");
+const Order = require("./model/order");
+const OrderItem = require("./model/orderItem");
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -31,17 +33,37 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-  if (!req.user) return next();
+  if (!req.user) {
+    res.locals.cartCount = 0;
+    res.locals.orderCount = 0;
+    return next();
+  }
+
   req.user
     .getCart()
     .then((cart) => cart.getProducts())
     .then((products) => {
-      let totalItems = 0;
-      products.forEach((p) => (totalItems += p.cartItem.quantity));
-      res.locals.cartCount = totalItems;
+      // let totalItems = 0;
+      // products.forEach((p) => (totalItems += p.cartItem.quantity));
+      // res.locals.cartCount = totalItems;
+      // next();
+      const cartCount = products.reduce(
+        (sum, p) => sum + p.cartItem.quantity,
+        0
+      );
+      res.locals.cartCount = cartCount;
+      return req.user.getOrders();
+    })
+    .then((orders) => {
+      res.locals.orderCount = orders.length;
       next();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      res.locals.cartCount = 0;
+      res.locals.orderCount = 0;
+      next();
+    });
 });
 
 app.use("/admin", adminRoutes);
@@ -54,6 +76,10 @@ User.hasOne(Cart);
 Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, { through: OrderItem });
+Product.belongsToMany(Order, { through: OrderItem });
 
 sequelize
   .sync({

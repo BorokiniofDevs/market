@@ -25,37 +25,28 @@
         <tbody>
           <% let total = 0; %> <% cart.forEach(item => { let subtotal =
           item.quantity * item.product.price; total += subtotal; %>
-          <tr>
+          <tr data-id="<%= item.product.id %>">
             <td><%= item.product.title %></td>
-            <td><%= item.quantity %></td>
+            <!-- <td class="quantity"><%= item.quantity %></td> -->
+            <td class="qty-num"><%= item.quantity %></td>
+
             <td>$<%= item.product.price.toFixed(2) %></td>
-            <td>$<%= subtotal.toFixed(2) %></td>
+            <td class="subtotal">$<%= subtotal.toFixed(2) %></td>
             <td>
-              <form
-                action="/shop/cart-reduce"
-                method="POST"
-                style="display: inline"
+              <button
+                type="button"
+                class="btn btn-small reduce-btn"
+                data-id="<%= item.product.id %>"
               >
-                <input
-                  type="hidden"
-                  name="productId"
-                  value="<%= item.product.id %>"
-                />
-                <button type="submit" class="btn btn-small">-</button>
-              </form>
-              <!-- <%= item.quantity %> -->
-              <form
-                action="/shop/cart-delete"
-                method="POST"
-                style="display: inline"
+                -
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger delete-btn"
+                data-id="<%= item.product.id %>"
               >
-                <input
-                  type="hidden"
-                  name="productId"
-                  value="<%= item.product.id %>"
-                />
-                <button type="submit" class="btn btn-danger">Delete</button>
-              </form>
+                Delete
+              </button>
             </td>
           </tr>
           <% }) %>
@@ -63,7 +54,9 @@
         <tfoot>
           <tr>
             <td colspan="3" class="total-label">Total:</td>
-            <td class="total-value">$<%= total.toFixed(2) %></td>
+            <td class="total-value" id="cart-total">
+              $<%= total.toFixed(2) %>
+            </td>
           </tr>
         </tfoot>
       </table>
@@ -83,3 +76,112 @@
     <%- include("../includes/footer.ejs") %>
   </body>
 </html>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // DOM handles we will update
+    const tbody = document.querySelector(".cart-table tbody"); // where rows live
+    const totalEl = document.getElementById("cart-total"); // total cell (id="cart-total")
+    const cartCountEl = document.getElementById("cart-count"); // navbar badge (id="cart-count")
+    const toastEl = createToast();
+
+    /* ---------- Helper: toast notification ---------- */
+    function createToast() {
+      const d = document.createElement("div");
+      d.id = "toast";
+      document.body.appendChild(d);
+      d.style.cssText = `
+      visibility: hidden; min-width: 200px; background: rgba(0,0,0,0.85); color: #fff;
+      text-align:center; padding:8px 12px; border-radius:6px; position: fixed; left:50%;
+      bottom:30px; transform: translateX(-50%); z-index:10000; transition: opacity .25s ease;
+    `;
+      return d;
+    }
+    function showToast(msg) {
+      toastEl.textContent = msg;
+      toastEl.style.visibility = "visible";
+      toastEl.style.opacity = "1";
+      setTimeout(() => {
+        toastEl.style.opacity = "0";
+        setTimeout(() => (toastEl.style.visibility = "hidden"), 250);
+      }, 2500);
+    }
+
+    /* ---------- Helper: update DOM from server response ---------- */
+    function updateCartUI(data) {
+      // data: { success: true, items: [{id,title,price,quantity,subtotal},...], total, count }
+      if (typeof data.total !== "undefined" && totalEl) {
+        totalEl.textContent = "$" + Number(data.total).toFixed(2);
+      }
+      if (cartCountEl) cartCountEl.textContent = data.count || 0;
+
+      // Update each existing row's quantity & subtotal
+      data.items.forEach((item) => {
+        const row = document.querySelector(`tr[data-id='${item.id}']`);
+        if (row) {
+          const qtyNode = row.querySelector(".qty-num");
+          if (qtyNode) qtyNode.textContent = item.quantity;
+          const subtotalNode = row.querySelector(".subtotal");
+          if (subtotalNode)
+            subtotalNode.textContent = "$" + Number(item.subtotal).toFixed(2);
+        } else {
+          // Optionally: if item not present in DOM (new item), add a row — left as an exercise
+        }
+      });
+
+      // Remove rows that were deleted server-side
+      Array.from(document.querySelectorAll("tr[data-id]")).forEach((row) => {
+        const id = row.dataset.id;
+        if (!data.items.find((i) => String(i.id) === String(id))) row.remove();
+      });
+    }
+
+    /* ---------- Event delegation: one listener on tbody ---------- */
+    // This avoids re-binding event listeners when rows change.
+    if (tbody) {
+      tbody.addEventListener("click", async (e) => {
+        // find +/- or delete button clicked, using closest so clicks on icons still work
+        const reduceBtn = e.target.closest(".reduce-btn");
+        const deleteBtn = e.target.closest(".delete-btn");
+
+        try {
+          if (reduceBtn) {
+            const id = reduceBtn.dataset.id;
+            // POST JSON to the server
+            const res = await fetch("/shop/cart-reduce", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ productId: id }),
+            });
+            const data = await res.json();
+            if (data.success) {
+              updateCartUI(data);
+              showToast("Quantity updated");
+            } else {
+              showToast("Could not update quantity");
+              console.error("Server error:", data);
+            }
+          } else if (deleteBtn) {
+            const id = deleteBtn.dataset.id;
+            const res = await fetch("/shop/cart-delete", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ productId: id }),
+            });
+            const data = await res.json();
+            if (data.success) {
+              updateCartUI(data);
+              showToast("Item removed");
+            } else {
+              showToast("Could not delete item");
+              console.error("Server error:", data);
+            }
+          }
+        } catch (err) {
+          console.error("Network / JS error", err);
+          showToast("Network error — try again");
+        }
+      });
+    }
+  });
+</script>

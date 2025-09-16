@@ -77,7 +77,7 @@ exports.postDeleteProduct = (req, res, next) => {
     })
     .then((result) => {
       console.log("PRODUCT DELETED");
-      return res.redirect("/shop/shop");
+      return res.redirect("/shop/index");
     })
     .catch((err) => {
       console.log(err);

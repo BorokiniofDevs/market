@@ -94,14 +94,36 @@ exports.postToCart = (req, res, next) => {
     });
 };
 
+// exports.postReduceCart = (req, res, next) => {
+//   const prodId = req.body.productId;
+//   req.user
+//     .getCart()
+//     .then((cart) => cart.getProducts({ where: { id: prodId } }))
+//     .then((products) => {
+//       const product = product[0];
+//       if (!product) return res.redirect("/shop/cart");
+//       let oldQuantity = product.cartItem.quantity;
+//       if (oldQuantity > 1) {
+//         return product.cartItem.update({ quantity: oldQuantity - 1 });
+//       } else {
+//         return product.cartItem.destroy();
+//       }
+//     })
+//     .then(() => res.redirect("/shop/cart"))
+//     .catch((err) => console.log(err));
+// };
+
 exports.postReduceCart = (req, res, next) => {
   const prodId = req.body.productId;
   req.user
     .getCart()
-    .then((cart) => cart.getProducts({ where: { id: prodId } }))
+    .then((cart) => {
+      updatedCart = cart;
+      return cart.getProducts({ where: { id: prodId } });
+    })
     .then((products) => {
-      const product = product[0];
-      if (!product) return res.redirect("/shop/cart");
+      const product = products[0];
+      if (!product) return res.json({ success: false });
       let oldQuantity = product.cartItem.quantity;
       if (oldQuantity > 1) {
         return product.cartItem.update({ quantity: oldQuantity - 1 });
@@ -109,20 +131,83 @@ exports.postReduceCart = (req, res, next) => {
         return product.cartItem.destroy();
       }
     })
-    .then(() => res.redirect("/shop/cart"))
-    .catch((err) => console.log(err));
+    .then(() => {
+      return updatedCart.getProducts();
+    })
+    .then((products) => {
+      let total = 0,
+        count = 0;
+      const items = products.map((p) => {
+        total += p.price * p.cartItem.quantity;
+        count += p.cartItem.quantity;
+
+        return {
+          id: p.id,
+          title: p.title,
+          price: p.price,
+          quantity: p.cartItem.quantity,
+          subtotal: p.price * p.cartItem.quantity,
+        };
+      });
+      res.json({ success: true, items, total, count });
+    })
+    .catch((err) => {
+      res.json({ success: false, error: err.message });
+      console.log(err);
+    });
 };
+
+// exports.postDeleteCart = (req, res, next) => {
+//   const prodId = req.body.productId;
+//   req.user
+//     .getCart()
+//     .then((cart) => cart.getProducts({ where: { id: prodId } }))
+//     .then((products) => {
+//       const product = products[0];
+//       if (!product) return res.redirect("/shop/cart");
+//       return product.cartItem.destroy();
+//     })
+//     .then(() => res.redirect("/shop/cart"))
+//     .catch((err) => console.log(err));
+// };
 
 exports.postDeleteCart = (req, res, next) => {
   const prodId = req.body.productId;
+  let updatedCart;
+
   req.user
     .getCart()
-    .then((cart) => cart.getProducts({ where: { id: prodId } }))
+    .then((cart) => {
+      updatedCart = cart;
+      return cart.getProducts({ where: { id: prodId } });
+    })
     .then((products) => {
       const product = products[0];
-      if (!product) return res.redirect("/shop/cart");
+      if (!product) return res.json({ success: false });
       return product.cartItem.destroy();
     })
-    .then(() => res.redirect("/shop/cart"))
-    .catch((err) => console.log(err));
+    .then(() => updatedCart.getProducts())
+    .then((products) => {
+      let total = 0,
+        count = 0;
+
+      const items = products.map((p) => {
+        total += p.price * p.cartItem.quantity;
+        count += p.cartItem.quantity;
+
+        return {
+          id: p.id,
+          title: p.title,
+          price: p.price,
+          quantity: p.cartItem.quantity,
+          subtotal: p.price * p.cartItem.quantity,
+        };
+      });
+
+      res.json({ success: true, items, total, count });
+    })
+    .catch((err) => {
+      res.json({ success: false, error: err.message });
+      console.error(err);
+    });
 };

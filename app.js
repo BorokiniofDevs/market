@@ -16,6 +16,7 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(rootdir, "public")));
+app.use(express.json());
 
 app.set("view engine", "ejs");
 app.set("views", path.join(rootdir, "views"));
